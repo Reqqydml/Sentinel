@@ -1,7 +1,8 @@
 from sentinel.domain.models import RiskTier
 from sentinel.schemas import AnalyzeRequest, GameInput, HistoricalProfile, MoveInput
 from sentinel.services.feature_pipeline import compute_features
-from sentinel.services.risk_engine import classify
+from sentinel.services.evidence_report import build_evidence_report
+from sentinel.services.risk_engine import classify, classify_with_meta
 from sentinel.services.signal_layers import evaluate_all_layers
 
 
@@ -50,13 +51,30 @@ def test_pipeline_runs() -> None:
     req = _sample_request()
     f = compute_features(req)
     layers = evaluate_all_layers(f)
-    tier, conf, _ = classify(f, layers)
+    tier, conf, _, weighted = classify(f, layers)
 
     assert f.analyzed_move_count > 0
     assert 0.0 <= conf <= 1.0
+    assert 0.0 <= weighted <= 1.0
     assert tier in {
         RiskTier.LOW,
         RiskTier.MODERATE,
         RiskTier.ELEVATED,
         RiskTier.HIGH_STATISTICAL_ANOMALY,
     }
+
+
+def test_evidence_report_shape() -> None:
+    req = _sample_request()
+    f = compute_features(req)
+    layers = evaluate_all_layers(f)
+    _, _, _, weighted, fusion_meta = classify_with_meta(f, layers)
+    report = build_evidence_report(req, f, layers, weighted, fusion_meta)
+
+    assert report["conclusion"]
+    assert "engine_match_percentage" in report
+    assert "maia_agreement_percentage" in report
+    assert "anomaly_score" in report
+    assert "centipawn_loss_statistics" in report
+    assert "position_difficulty_metrics" in report
+    assert "analysis_layers" in report
