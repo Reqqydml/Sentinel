@@ -1,38 +1,91 @@
-:root {
-  color-scheme: dark;
-  --bg: #08101d;
-  --surface: #0f1a2a;
-  --surface-2: #11243b;
-  --border: #1f3957;
-  --text: #edf4ff;
-  --muted: #8ca1bc;
-  --accent: #2d93f5;
-  --safe: #1e8c55;
-  --moderate: #d8a520;
-  --elevated: #de7a2c;
-  --high: #d64b3f;
-  --data: #57e7ff;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 4%;
+    --foreground: 210 40% 98%;
+    --card: 210 40% 8%;
+    --card-foreground: 210 40% 98%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --accent: 188 100% 50%;
+    --accent-foreground: 210 40% 4%;
+    --muted: 217 32% 26%;
+    --muted-foreground: 215 13% 64%;
+    --border: 217 32% 18%;
+    --input: 217 32% 14%;
+    --ring: 210 100% 50%;
+    --chart: 210 100% 50%;
+    --risk-low: 142 76% 36%;
+    --risk-low-text: 142 76% 92%;
+    --risk-moderate: 38 92% 50%;
+    --risk-moderate-text: 38 92% 95%;
+    --risk-elevated: 25 95% 53%;
+    --risk-elevated-text: 25 95% 95%;
+    --risk-high: 0 84% 60%;
+    --risk-high-text: 0 84% 95%;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'Fira Code', monospace;
+    --radius: 8px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer components {
+  .card {
+    @apply bg-card border border-border rounded-lg;
+  }
 
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background: radial-gradient(circle at 12% 12%, #122947 0%, transparent 40%),
-    radial-gradient(circle at 90% -5%, #17365f 0%, transparent 30%), var(--bg);
-  color: var(--text);
-}
+  .badge-risk {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold;
+  }
 
-body {
-  font-family: var(--font-body), "Space Grotesk", sans-serif;
-  background: radial-gradient(circle at 10% 10%, rgba(45, 147, 245, 0.18), transparent 32%),
-    radial-gradient(circle at 82% 6%, rgba(87, 231, 255, 0.14), transparent 30%),
-    radial-gradient(circle at 20% 85%, rgba(214, 75, 63, 0.11), transparent 24%),
-    var(--bg);
+  .badge-low {
+    @apply bg-risk-low text-risk-low-text;
+  }
+
+  .badge-moderate {
+    @apply bg-risk-moderate text-risk-moderate-text;
+  }
+
+  .badge-elevated {
+    @apply bg-risk-elevated text-risk-elevated-text;
+  }
+
+  .badge-high {
+    @apply bg-risk-high text-risk-high-text animate-pulse;
+  }
+
+  .monospace {
+    font-family: var(--font-mono);
+    @apply text-accent;
+  }
+
+  .kpi-card {
+    @apply bg-card border border-border rounded-lg p-4;
+  }
+
+  .kpi-value {
+    @apply text-3xl font-bold text-primary;
+  }
+
+  .kpi-label {
+    @apply text-sm text-muted-foreground;
+  }
 }
 
 h1,

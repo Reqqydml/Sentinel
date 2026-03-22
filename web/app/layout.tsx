@@ -1,29 +1,22 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Fira_Code, Source_Code_Pro } from "next/font/google";
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 
-const headingFont = IBM_Plex_Mono({
+const sansFont = Source_Code_Pro({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-heading",
+  variable: "--font-sans",
   display: "swap",
   preload: true,
 });
 
-const bodyFont = Space_Grotesk({
+const monoFont = Fira_Code({
   subsets: ["latin"],
-  variable: "--font-body",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-mono",
   display: "swap",
   preload: true,
-});
-
-const dataFont = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-data",
-  display: "swap",
-  preload: false, // Secondary font — load lazily
 });
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -56,11 +49,9 @@ export const viewport: Viewport = {
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
 
-const fontVariables = [
-  headingFont.variable,
-  bodyFont.variable,
-  dataFont.variable,
-].join(" ");
+const fontVariables = [sansFont.variable, monoFont.variable].join(" ");
+
+import AppLayout from '@/components/AppLayout';
 
 export default function RootLayout({
   children,
@@ -69,8 +60,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={fontVariables}>
-        {children}
+      <body className={`${fontVariables} antialiased`}>
+        <AppLayout>
+          {children}
+        </AppLayout>
       </body>
     </html>
   );
