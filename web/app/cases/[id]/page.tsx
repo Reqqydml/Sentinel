@@ -45,7 +45,7 @@ export default function CaseDetail() {
           listCaseNotes(caseId),
         ]);
         setCaseData(caseResult);
-        setNotes(notesResult || []);
+        setNotes((notesResult as CaseNote[]) || []);
         setError(null);
       } catch (err) {
         setError((err as Error).message);
