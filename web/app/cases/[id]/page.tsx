@@ -64,7 +64,7 @@ export default function CaseDetail() {
     setSubmittingNote(true);
     try {
       const newNote = await addCaseNote(caseId, { content: noteContent.trim() });
-      setNotes([newNote, ...notes]);
+      setNotes([(newNote as CaseNote), ...notes]);
       setNoteContent('');
     } catch (err) {
       console.error('Failed to add note:', err);
