@@ -289,7 +289,7 @@ export interface CaseNote {
   id: string;
   content: string;
   created_at: string;
-  author?: string;
+  created_by?: string;
 }
 
 export interface TournamentDashboardResponse {
