@@ -4,27 +4,9 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, Play, Pause, RotateCcw, Radio } from 'lucide-react';
 import Link from 'next/link';
 import { getLiveSession } from '@/lib/api';
+import type { LiveSession } from '@/lib/types';
 import ChessboardAnalyzer from '@/components/Chessboard';
 import RiskBadge from '@/components/RiskBadge';
-
-interface LiveSession {
-  id: string;
-  white_player: string;
-  black_player: string;
-  event_id?: string;
-  current_fen: string;
-  move_count: number;
-  white_rating?: number;
-  black_rating?: number;
-  risk_assessment?: {
-    white_score: number;
-    black_score: number;
-    white_tier: string;
-    black_tier: string;
-  };
-  created_at: string;
-  last_move_at: string;
-}
 
 export default function LiveMonitor() {
   const [sessionId, setSessionId] = useState('');

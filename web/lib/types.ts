@@ -273,11 +273,19 @@ export interface LiveSession {
   id: string;
   white_player: string;
   black_player: string;
+  event_id?: string;
   current_fen: string;
-  moves_played: string[];
-  session_status: 'active' | 'paused' | 'ended';
+  move_count: number;
+  white_rating?: number;
+  black_rating?: number;
+  risk_assessment?: {
+    white_score: number;
+    black_score: number;
+    white_tier: string;
+    black_tier: string;
+  };
   created_at: string;
-  risk_assessment?: Record<string, any>;
+  last_move_at: string;
 }
 
 export interface LiveSessionCreateRequest {
