@@ -115,9 +115,7 @@ export default function PgnAnalysisForm({ onSuccess, onError, className = '' }: 
         <textarea
           value={pgn}
           onChange={(e) => setPgn(e.target.value)}
-          placeholder="[Event "?"][Date "?"]
-          
-1. e4 c5 2. Nf3 d6..."
+          placeholder={'[Event "?"],[Date "?"]\n\n1. e4 c5 2. Nf3 d6...'}
           className="input w-full h-48 resize-none p-3 font-mono text-xs"
           disabled={loading}
         />

@@ -1,0 +1,167 @@
+{
+  "status": "✅ Available in Repository",
+  "executables": {
+    "stockfish": {
+      "compressed": "stockfish/stockfish.zip",
+      "note": "Extract this file to get the binary executable",
+      "windows_binary": "stockfish/stockfish-windows-x86-64-avx2.exe (after extraction)"
+    }
+  },
+  "ml_models": {
+    "maia_neural_networks": {
+      "base_directory": "backend/models/maia/",
+      "elo_variants": [
+        "backend/models/maia/maia-1100/model.pb",
+        "backend/models/maia/maia-1200/model.pb",
+        "backend/models/maia/maia-1300/model.pb",
+        "backend/models/maia/maia-1400/model.pb",
+        "backend/models/maia/maia-1500/model.pb",
+        "backend/models/maia/maia-1600/model.pb",
+        "backend/models/maia/maia-1700/model.pb",
+        "backend/models/maia/maia-1800/model.pb",
+        "backend/models/maia/maia-1900/model.pb"
+      ],
+      "fallback_model": "backend/models/maia/model.pb",
+      "env_variable": "MAIA_MODELS_DIR=backend/models/maia/"
+    },
+    "xgboost": {
+      "path": "backend/models/xgboost/v1.0/xgboost_model.json",
+      "env_variable": "XGBOOST_MODEL_PATH=backend/models/xgboost/v1.0/xgboost_model.json"
+    },
+    "isolation_forest": {
+      "path": "backend/models/isolation_forest/v1.0/isolation_forest.pkl",
+      "env_variable": "ISOLATION_FOREST_MODEL_PATH=backend/models/isolation_forest/v1.0/isolation_forest.pkl"
+    }
+  },
+  "calibration_profiles": {
+    "production": "backend/calibration/regan_calibration_profile.json",
+    "qa_testing": "backend/calibration/regan_calibration_profile.qa.json",
+    "example_reference": "backend/calibration/regan_calibration_profile.example.json",
+    "env_variable": "CALIBRATION_PROFILE_PATH=backend/calibration/regan_calibration_profile.json"
+  },
+  "configuration_files": {
+    "backend_example": "backend/.env.example",
+    "backend_actual": "backend/.env (create from example)",
+    "web_example": "web/.env.example",
+    "web_actual": "web/.env.local (already in repo)"
+  },
+  "environment_variables_needed": {
+    "critical_local_paths": [
+      {
+        "name": "STOCKFISH_PATH",
+        "available": true,
+        "example": "C:\\path\\to\\stockfish-windows-x86-64-avx2.exe",
+        "note": "Extract from stockfish/stockfish.zip"
+      },
+      {
+        "name": "MAIA_MODELS_DIR",
+        "available": true,
+        "example": "backend/models/maia/",
+        "note": "Contains 9 ELO-specific model.pb files"
+      },
+      {
+        "name": "XGBOOST_MODEL_PATH",
+        "available": true,
+        "example": "backend/models/xgboost/v1.0/xgboost_model.json",
+        "note": "ML fusion XGBoost model"
+      },
+      {
+        "name": "ISOLATION_FOREST_MODEL_PATH",
+        "available": true,
+        "example": "backend/models/isolation_forest/v1.0/isolation_forest.pkl",
+        "note": "Anomaly detection model"
+      },
+      {
+        "name": "CALIBRATION_PROFILE_PATH",
+        "available": true,
+        "example": "backend/calibration/regan_calibration_profile.json",
+        "note": "Regan z-score calibration"
+      }
+    ],
+    "external_services": [
+      {
+        "name": "SUPABASE_URL",
+        "available": false,
+        "required": true,
+        "example": "https://your-project.supabase.co",
+        "setup": "Create account at https://supabase.com"
+      },
+      {
+        "name": "SUPABASE_ANON_KEY",
+        "available": false,
+        "required": true,
+        "setup": "From Supabase project dashboard"
+      },
+      {
+        "name": "SUPABASE_SERVICE_ROLE_KEY",
+        "available": false,
+        "required": true,
+        "setup": "From Supabase project settings (secret)"
+      },
+      {
+        "name": "REDIS_URL",
+        "available": false,
+        "required": true,
+        "example": "redis://localhost:6379/0",
+        "setup": "Local: docker run -d -p 6379:6379 redis or Cloud: Upstash, AWS"
+      },
+      {
+        "name": "LICHESS_API_TOKEN",
+        "available": false,
+        "required": false,
+        "example": "lip_XXXXXXXXXX",
+        "setup": "https://lichess.org/account/oauth/token"
+      },
+      {
+        "name": "SENTINEL_ENCRYPTION_KEY",
+        "available": false,
+        "required": false,
+        "setup": "Generate: openssl rand -base64 32"
+      },
+      {
+        "name": "LLM_API_KEY",
+        "available": false,
+        "required": false,
+        "setup": "OpenAI, Anthropic, or other LLM provider"
+      }
+    ]
+  },
+  "directory_structure": {
+    "backend": {
+      "models": {
+        "maia": "✅ 9 ELO-specific neural network models (.pb files)",
+        "xgboost": "✅ XGBoost JSON model for ML fusion",
+        "isolation_forest": "✅ Pickle file for anomaly detection"
+      },
+      "calibration": "✅ 3 calibration profile JSON files (prod, qa, example)",
+      ".env": "Need to create from .env.example"
+    },
+    "web": {
+      ".env.local": "✅ Already present (frontend config)",
+      ".env.example": "✅ Reference configuration"
+    },
+    "stockfish": "✅ stockfish.zip compressed binary (extract before use)"
+  },
+  "summary": {
+    "total_available": 13,
+    "available_count": 13,
+    "status": "All critical model files, binaries, and calibration profiles are in the repository",
+    "missing_count": 7,
+    "missing_items": [
+      "SUPABASE credentials",
+      "REDIS connection string",
+      "LICHESS API token (optional)",
+      "LLM API keys (optional)",
+      "Encryption key (optional)"
+    ],
+    "next_steps": [
+      "1. Extract stockfish/stockfish.zip",
+      "2. Copy backend/.env.example to backend/.env",
+      "3. Update paths in .env (STOCKFISH_PATH, MAIA_MODELS_DIR, etc.)",
+      "4. Create Supabase project and add credentials",
+      "5. Setup Redis (local or cloud)",
+      "6. Start backend: uvicorn --app-dir src sentinel.main:app --reload --port 8000",
+      "7. Start frontend: npm run dev"
+    ]
+  }
+}
