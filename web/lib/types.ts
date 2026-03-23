@@ -1,7 +1,5 @@
-// Risk Tiers
 export type RiskTier = 'LOW' | 'MODERATE' | 'ELEVATED' | 'HIGH_STATISTICAL_ANOMALY';
 
-// Signal Results
 export interface Signal {
   name: string;
   triggered: boolean;
@@ -10,7 +8,6 @@ export interface Signal {
   reasons: string[];
 }
 
-// Move Input
 export interface MoveInput {
   ply: number;
   engine_best: string;
@@ -32,14 +29,12 @@ export interface MoveInput {
   time_spent_seconds?: number;
 }
 
-// Game Input
 export interface GameInput {
   game_id: string;
   opponent_official_elo?: number;
   moves: MoveInput[];
 }
 
-// Historical Profile
 export interface HistoricalProfile {
   games_count?: number;
   avg_acl?: number;
@@ -50,7 +45,6 @@ export interface HistoricalProfile {
   std_perf?: number;
 }
 
-// Analyze Request
 export interface AnalyzeRequest {
   player_id: string;
   event_id: string;
@@ -63,7 +57,6 @@ export interface AnalyzeRequest {
   behavioral?: Record<string, any>;
 }
 
-// Analyze PGN Request
 export interface AnalyzePgnRequest {
   player_id: string;
   event_id: string;
@@ -77,7 +70,6 @@ export interface AnalyzePgnRequest {
   historical?: HistoricalProfile;
 }
 
-// Evidence Report
 export interface EvidenceReport {
   conclusion: string;
   engine_match_percentage: number;
@@ -88,11 +80,7 @@ export interface EvidenceReport {
   anomaly_source: string;
   centipawn_loss_statistics: Record<string, number>;
   position_difficulty_metrics: Record<string, number | string>;
-  analysis_layers: Array<{
-    name: string;
-    status: string;
-    metrics: Record<string, any>;
-  }>;
+  analysis_layers: Array<{ name: string; status: string; metrics: Record<string, any> }>;
   signals: Signal[];
   player_anomaly_scores: number[];
   player_anomaly_trend: number;
@@ -105,7 +93,6 @@ export interface EvidenceReport {
   notes: string[];
 }
 
-// Analyze Response
 export interface AnalyzeResponse {
   player_id: string;
   event_id: string;
@@ -165,7 +152,6 @@ export interface AnalyzeResponse {
   identity_confidence?: Record<string, any>;
 }
 
-// Dashboard Feed Types
 export interface GameCard {
   game_id: string;
   event_id: string;
@@ -204,7 +190,6 @@ export interface DashboardFeed {
   };
 }
 
-// System Status
 export interface SystemStatusResponse {
   generated_at_utc: string;
   app_env: string;
@@ -227,7 +212,6 @@ export interface SystemStatusResponse {
   warnings: string[];
 }
 
-// Cases
 export interface CaseRecord {
   id: string;
   created_at: string;
@@ -242,7 +226,6 @@ export interface CaseRecord {
   assigned_to?: string;
 }
 
-// Tournament Summary
 export interface TournamentGameSummary {
   game_id: string;
   analyzed_move_count: number;
@@ -266,7 +249,6 @@ export interface TournamentSummaryResponse {
   per_game: TournamentGameSummary[];
 }
 
-// Player Profile
 export interface PlayerProfileResponse {
   player_id: string;
   updated_at?: string;
@@ -274,7 +256,6 @@ export interface PlayerProfileResponse {
   history: Array<Record<string, any>>;
 }
 
-// OTB Incident
 export interface OTBIncidentRecord {
   id: string;
   case_id?: string;
@@ -288,13 +269,11 @@ export interface OTBIncidentRecord {
   created_at: string;
 }
 
-// Live Session
 export interface LiveSessionCreateRequest {
   event_id?: string;
   players: string[];
 }
 
-// Tournament Dashboard
 export interface TournamentDashboardResponse {
   event_id?: string;
   players: Array<Record<string, any>>;
