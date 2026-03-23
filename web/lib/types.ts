@@ -269,9 +269,27 @@ export interface OTBIncidentRecord {
   created_at: string;
 }
 
+export interface LiveSession {
+  id: string;
+  white_player: string;
+  black_player: string;
+  current_fen: string;
+  moves_played: string[];
+  session_status: 'active' | 'paused' | 'ended';
+  created_at: string;
+  risk_assessment?: Record<string, any>;
+}
+
 export interface LiveSessionCreateRequest {
   event_id?: string;
   players: string[];
+}
+
+export interface CaseNote {
+  id: string;
+  content: string;
+  created_at: string;
+  author?: string;
 }
 
 export interface TournamentDashboardResponse {

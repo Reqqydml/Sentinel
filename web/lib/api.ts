@@ -10,6 +10,8 @@ import type {
   OTBIncidentRecord,
   TournamentDashboardResponse,
   LiveSessionCreateRequest,
+  LiveSession,
+  CaseNote,
 } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -138,7 +140,7 @@ export async function updateCaseStatus(caseId: string, status: string, options?:
   });
 }
 
-export async function addCaseNote(caseId: string, data: any, options?: FetchOptions): Promise<Record<string, any>> {
+export async function addCaseNote(caseId: string, data: any, options?: FetchOptions): Promise<CaseNote> {
   return apiFetch(`/v1/cases/${caseId}/notes`, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -146,7 +148,7 @@ export async function addCaseNote(caseId: string, data: any, options?: FetchOpti
   });
 }
 
-export async function listCaseNotes(caseId: string, options?: FetchOptions): Promise<Array<Record<string, any>>> {
+export async function listCaseNotes(caseId: string, options?: FetchOptions): Promise<CaseNote[]> {
   return apiFetch(`/v1/cases/${caseId}/notes`, options);
 }
 
@@ -174,7 +176,7 @@ export async function getTournamentDashboard(eventId?: string, options?: FetchOp
   return apiFetch(`/v1/tournament-dashboard?${params}`, options);
 }
 
-export async function createLiveSession(data: LiveSessionCreateRequest, options?: FetchOptions): Promise<Record<string, any>> {
+export async function createLiveSession(data: LiveSessionCreateRequest, options?: FetchOptions): Promise<LiveSession> {
   return apiFetch('/v1/live/sessions', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -182,7 +184,7 @@ export async function createLiveSession(data: LiveSessionCreateRequest, options?
   });
 }
 
-export async function getLiveSession(sessionId: string, options?: FetchOptions): Promise<Record<string, any>> {
+export async function getLiveSession(sessionId: string, options?: FetchOptions): Promise<LiveSession> {
   return apiFetch(`/v1/live/sessions/${sessionId}`, options);
 }
 
