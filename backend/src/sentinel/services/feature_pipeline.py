@@ -397,7 +397,7 @@ def compute_features(req: AnalyzeRequest) -> AggregatedFeatures:
         "regan_z_score": regan_ci,
     }
 
-        return AggregatedFeatures(
+    return AggregatedFeatures(
         analyzed_move_count=analyzed,
         engine_match_pct=float(mean(engine_best_match)),
         top3_match_pct=float(mean(top3_match)),
@@ -466,18 +466,18 @@ def compute_features(req: AnalyzeRequest) -> AggregatedFeatures:
         behavioral_avg_mouse_path_straightness=b_straight,
         behavioral_avg_move_time_seconds=b_time,
         behavioral_mouse_event_count=b_mouse,
-            behavioral_avg_drag_duration_ms=b_drag,
-            behavioral_avg_hover_dwell_played_square_ms=b_dwell,
-            behavioral_avg_squares_visited=b_squares,
-            behavioral_avg_reaction_time_ms=b_reaction,
-            camera_event_count=cam_event_count,
-            camera_face_missing_count=cam_face_missing,
-            camera_multiple_faces_count=cam_multiple_faces,
-            camera_gaze_away_count=cam_gaze_away,
-            camera_low_light_count=cam_low_light,
-            camera_microphone_active_count=cam_microphone,
-            identity_shared_device=identity_shared,
-            identity_distinct_count=identity_distinct,
-            identity_seen_count=identity_seen,
-            confidence_intervals=ci_map,
-        )
+        behavioral_avg_drag_duration_ms=b_drag,
+        behavioral_avg_hover_dwell_played_square_ms=b_dwell,
+        behavioral_avg_squares_visited=b_squares,
+        behavioral_avg_reaction_time_ms=b_reaction,
+        camera_event_count=cam_event_count,
+        camera_face_missing_count=cam_face_missing,
+        camera_multiple_faces_count=cam_multiple_faces,
+        camera_gaze_away_count=cam_gaze_away,
+        camera_low_light_count=cam_low_light,
+        camera_microphone_active_count=cam_microphone,
+        identity_shared_device=identity_shared,
+        identity_distinct_count=identity_distinct,
+        identity_seen_count=identity_seen,
+        confidence_intervals=ci_map,
+    )
