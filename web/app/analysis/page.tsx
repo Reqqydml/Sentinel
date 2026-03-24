@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
 import { ArrowLeft, Copy, Check } from 'lucide-react';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { getAudit } from '@/lib/api';
 import type { AnalyzeResponse } from '@/lib/types';
 import { formatRelativeTime, formatPercentage, formatZScore, formatCentipawns } from '@/lib/utils';
 
-export default function AnalysisDetail() {
+function AnalysisDetailInner() {
   const searchParams = useSearchParams();
   const auditId = searchParams.get('id');
   const [audit, setAudit] = useState<any>(null);
@@ -149,11 +149,10 @@ export default function AnalysisDetail() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
-                  activeTab === tab.id
+                className={`px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${activeTab === tab.id
                     ? 'border-primary text-primary'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -343,5 +342,17 @@ export default function AnalysisDetail() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function AnalysisDetail() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <p className="text-muted-foreground">Loading analysis...</p>
+      </div>
+    }>
+      <AnalysisDetailInner />
+    </Suspense>
   );
 }
