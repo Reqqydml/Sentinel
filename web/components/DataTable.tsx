@@ -31,51 +31,42 @@ export default function DataTable<T>({
   striped = true,
   hover = true,
 }: DataTableProps<T>) {
+  if (loading) {
+    return <div className="p-8 text-center text-muted-foreground">Loading...</div>;
+  }
+
+  if (data.length === 0) {
+    return <div className="p-8 text-center text-muted-foreground">{emptyMessage}</div>;
+  }
+
   return (
     <div className={`overflow-x-auto ${className}`}>
-      <table className="w-full text-sm border-collapse">
-        <thead className="border-b border-border bg-muted/30">
-          <tr>
-            {columns.map(col => (
-              <th
-                key={String(col.key)}
-                className={`text-left px-4 py-3 font-semibold text-muted-foreground ${col.headerClassName || ''}`}
-              >
+      <table className="w-full text-sm">
+        <thead className="border-b border-border">
+          <tr className="text-muted-foreground">
+            {columns.map((col) => (
+              <th key={String(col.key)} className={`text-left py-3 px-4 font-semibold ${col.headerClassName || ''}`}>
                 {col.label}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={columns.length} className="text-center py-8 text-muted-foreground">
-                Loading...
-              </td>
+          {data.map((row, idx) => (
+            <tr
+              key={String(row[rowKey])}
+              onClick={() => onRowClick?.(row)}
+              className={`border-b border-border/50 ${
+                striped && idx % 2 === 0 ? 'bg-muted/20' : ''
+              } ${hover && onRowClick ? 'hover:bg-muted/50 cursor-pointer' : ''} transition`}
+            >
+              {columns.map((col) => (
+                <td key={String(col.key)} className={`py-3 px-4 text-foreground ${col.className || ''}`}>
+                  {col.render ? col.render(row[col.key], row) : String(row[col.key])}
+                </td>
+              ))}
             </tr>
-          ) : data.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="text-center py-8 text-muted-foreground">
-                {emptyMessage}
-              </td>
-            </tr>
-          ) : (
-            data.map((item, idx) => (
-              <tr
-                key={String(item[rowKey])}
-                onClick={() => onRowClick?.(item)}
-                className={`border-b border-border/50 transition ${
-                  striped && idx % 2 === 1 ? 'bg-muted/10' : ''
-                } ${hover && onRowClick ? 'hover:bg-muted/30 cursor-pointer' : ''}`}
-              >
-                {columns.map(col => (
-                  <td key={String(col.key)} className={`px-4 py-3 ${col.className || ''}`}>
-                    {col.render ? col.render(item[col.key], item) : String(item[col.key])}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
+          ))}
         </tbody>
       </table>
     </div>

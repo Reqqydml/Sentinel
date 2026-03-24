@@ -28,17 +28,11 @@ export default function KPICard({
             {loading ? '—' : value}
           </p>
         </div>
-        {icon && (
-          <div className="text-muted-foreground ml-2">
-            {icon}
-          </div>
-        )}
+        {icon && <div className="text-muted-foreground">{icon}</div>}
       </div>
-      {trendValue !== undefined && (
-        <div className={`mt-2 text-xs ${
-          trend === 'up' ? 'text-red-400' :
-          trend === 'down' ? 'text-green-400' :
-          'text-muted-foreground'
+      {trend && trendValue && (
+        <div className={`mt-3 text-sm font-medium ${
+          trend === 'up' ? 'text-red-400' : trend === 'down' ? 'text-green-400' : 'text-muted-foreground'
         }`}>
           {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'} {trendValue}
         </div>

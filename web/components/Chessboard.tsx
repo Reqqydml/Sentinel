@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 
@@ -29,96 +28,74 @@ export default function ChessboardAnalyzer({
   const chess = useMemo(() => new Chess(), []);
   const [moveHistory, setMoveHistory] = useState<string[]>([]);
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1);
+  const [fen, setFen] = useState<string>(initialFen || chess.fen());
 
-  // Load PGN or initial FEN
-  useMemo(() => {
-    chess.reset();
-    if (pgn) {
+  const loadPgn = useCallback(() => {
+    if (!pgn) return;
+    try {
+      chess.reset();
       chess.loadPgn(pgn);
-      const history = chess.moves({ verbose: true }).map(m => m.san);
-      setMoveHistory(history);
-    } else if (initialFen) {
-      chess.load(initialFen);
-    }
-    chess.reset();
-    setCurrentMoveIndex(-1);
-  }, [pgn, initialFen, chess]);
-
-  const currentFen = useMemo(() => {
-    const tempChess = new Chess();
-    if (pgn) tempChess.loadPgn(pgn);
-    else if (initialFen) tempChess.load(initialFen);
-    else return tempChess.fen();
-
-    for (let i = 0; i <= currentMoveIndex; i++) {
-      if (i < moveHistory.length) {
-        tempChess.move(moveHistory[i]);
+      const moves = [];
+      const tempChess = new Chess();
+      tempChess.loadPgn(pgn);
+      let move;
+      while ((move = tempChess.moves({ verbose: true })[0])) {
+        moves.push(tempChess.move(move).san);
       }
+      setMoveHistory(moves);
+      setCurrentMoveIndex(-1);
+      setFen(chess.fen());
+    } catch (e) {
+      console.error('Failed to load PGN:', e);
     }
-    return tempChess.fen();
-  }, [pgn, initialFen, moveHistory, currentMoveIndex]);
+  }, [pgn, chess]);
 
-  const handleMakeMove = useCallback(
-    (sourceSquare: string, targetSquare: string) => {
-      if (readOnly) return false;
-      const tempChess = new Chess(currentFen);
-      const move = tempChess.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q',
-      });
-      if (move) {
-        onMoveSelect?.(move.san);
-        return true;
-      }
-      return false;
-    },
-    [currentFen, readOnly, onMoveSelect]
-  );
+  useState(() => {
+    if (pgn) loadPgn();
+  });
 
   const goToMove = (index: number) => {
-    const newIndex = Math.max(-1, Math.min(index, moveHistory.length - 1));
-    setCurrentMoveIndex(newIndex);
+    if (index < -1 || index >= moveHistory.length) return;
+    
+    chess.reset();
+    for (let i = 0; i <= index; i++) {
+      if (i < moveHistory.length) {
+        chess.move(moveHistory[i]);
+      }
+    }
+    
+    setCurrentMoveIndex(index);
+    setFen(chess.fen());
+    if (index >= 0) {
+      onMoveSelect?.(moveHistory[index]);
+    }
   };
 
-  const boardSize = (squareWidth * 8);
+  const nextMove = () => {
+    goToMove(currentMoveIndex + 1);
+  };
+
+  const prevMove = () => {
+    goToMove(currentMoveIndex - 1);
+  };
+
+  const reset = () => {
+    goToMove(-1);
+  };
 
   return (
-    <div className={`flex flex-col gap-4 ${className}`}>
-      <div className="flex justify-center">
-        <div style={{ width: boardSize, height: boardSize }} className="border border-border rounded-lg overflow-hidden">
-          <Chessboard
-            position={currentFen}
-            onPieceDrop={handleMakeMove}
-            boardWidth={boardSize}
-            showBoardNotation={showCoordinates}
-            arePiecesDraggable={!readOnly}
-            customBoardStyle={{
-              borderRadius: '4px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-            customSquareStyles={{
-              // Highlight last move
-              ...(() => {
-                if (currentMoveIndex >= 0 && moveHistory[currentMoveIndex]) {
-                  const tempChess = new Chess();
-                  if (pgn) tempChess.loadPgn(pgn);
-                  for (let i = 0; i < currentMoveIndex; i++) {
-                    tempChess.move(moveHistory[i]);
-                  }
-                  const moves = tempChess.moves({ verbose: true });
-                  const moveObj = moves.find(m => m.san === moveHistory[currentMoveIndex]);
-                  if (moveObj) {
-                    return {
-                      [moveObj.from]: { backgroundColor: 'rgba(255, 193, 7, 0.4)' },
-                      [moveObj.to]: { backgroundColor: 'rgba(255, 193, 7, 0.4)' },
-                    };
-                  }
-                }
-                return {};
-              })(),
-            }}
-          />
+    <div className={`space-y-4 ${className}`}>
+      <div className={`bg-slate-700 border-4 border-slate-900 rounded flex items-center justify-center ${height}`}>
+        <div className="text-center text-white space-y-2">
+          <p className="text-2xl font-bold">♟ Chessboard</p>
+          <p className="text-sm opacity-75">
+            {fen ? `FEN: ${fen.split(' ')[0].substring(0, 30)}...` : 'Position: Initial'}
+          </p>
+          {moveHistory.length > 0 && (
+            <p className="text-sm opacity-75">
+              Move {currentMoveIndex + 1} of {moveHistory.length}
+            </p>
+          )}
         </div>
       </div>
 
@@ -126,41 +103,41 @@ export default function ChessboardAnalyzer({
         <div className="space-y-3">
           <div className="flex gap-2">
             <button
-              onClick={() => goToMove(-1)}
-              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition"
-              title="Start position"
+              onClick={reset}
+              className="px-2 py-1 bg-muted hover:bg-muted/80 text-foreground rounded text-sm flex items-center gap-1 transition"
             >
               <RotateCcw className="w-4 h-4" />
+              Reset
             </button>
             <button
-              onClick={() => goToMove(currentMoveIndex - 1)}
-              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition"
-              title="Previous move"
+              onClick={prevMove}
+              disabled={currentMoveIndex <= -1}
+              className="px-2 py-1 bg-muted hover:bg-muted/80 text-foreground rounded text-sm flex items-center gap-1 disabled:opacity-50 transition"
             >
               <ChevronLeft className="w-4 h-4" />
+              Prev
             </button>
             <button
-              onClick={() => goToMove(currentMoveIndex + 1)}
-              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition"
-              title="Next move"
+              onClick={nextMove}
+              disabled={currentMoveIndex >= moveHistory.length - 1}
+              className="px-2 py-1 bg-muted hover:bg-muted/80 text-foreground rounded text-sm flex items-center gap-1 disabled:opacity-50 transition"
             >
+              Next
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="text-sm">
-            <p className="text-muted-foreground mb-2">
-              Move {currentMoveIndex + 1} / {moveHistory.length}
-            </p>
-            <div className="flex flex-wrap gap-1">
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-foreground">Moves</h3>
+            <div className="flex flex-wrap gap-2 bg-muted/30 p-3 rounded">
               {moveHistory.map((move, idx) => (
                 <button
                   key={idx}
                   onClick={() => goToMove(idx)}
-                  className={`px-2 py-1 rounded text-xs font-mono transition ${
-                    idx === currentMoveIndex
+                  className={`px-3 py-1 rounded text-sm font-mono transition ${
+                    currentMoveIndex === idx
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      : 'bg-muted hover:bg-muted/80 text-foreground'
                   }`}
                 >
                   {idx + 1}. {move}

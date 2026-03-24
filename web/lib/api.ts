@@ -10,9 +10,11 @@ import type {
   OTBIncidentRecord,
   TournamentDashboardResponse,
   LiveSessionCreateRequest,
+  LiveSession,
+  CaseNote,
 } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_SENTINEL_API || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface FetchOptions {
   headers?: Record<string, string>;
@@ -23,7 +25,7 @@ interface FetchOptions {
 
 async function apiFetch<T>(
   path: string,
-  options: RequestInit & FetchOptions = {}
+  options: Omit<RequestInit, 'headers'> & FetchOptions = {}
 ): Promise<T> {
   const { headers = {}, role = 'system_admin', federationId, apiKey, ...fetchOptions } = options;
 
@@ -55,7 +57,6 @@ async function apiFetch<T>(
   return response.json();
 }
 
-// Dashboard & Monitoring
 export async function getDashboardFeed(limit = 200, eventId?: string, options?: FetchOptions): Promise<DashboardFeed> {
   const params = new URLSearchParams();
   if (limit) params.append('limit', limit.toString());
@@ -67,7 +68,6 @@ export async function getSystemStatus(options?: FetchOptions): Promise<SystemSta
   return apiFetch('/v1/system-status', options);
 }
 
-// Analysis
 export async function analyze(req: AnalyzeRequest, options?: FetchOptions): Promise<AnalyzeResponse> {
   return apiFetch('/v1/analyze', {
     method: 'POST',
@@ -92,7 +92,6 @@ export async function getTournamentSummary(req: AnalyzeRequest | AnalyzePgnReque
   });
 }
 
-// Reports
 export async function getReportStatus(auditId: string, options?: FetchOptions): Promise<Record<string, any>> {
   return apiFetch(`/v1/reports/${auditId}`, options);
 }
@@ -115,7 +114,6 @@ export async function getAudit(auditId: string, options?: FetchOptions): Promise
   return apiFetch(`/v1/audit/${auditId}`, options);
 }
 
-// Cases
 export async function createCase(data: any, options?: FetchOptions): Promise<CaseRecord> {
   return apiFetch('/v1/cases', {
     method: 'POST',
@@ -142,7 +140,7 @@ export async function updateCaseStatus(caseId: string, status: string, options?:
   });
 }
 
-export async function addCaseNote(caseId: string, data: any, options?: FetchOptions): Promise<Record<string, any>> {
+export async function addCaseNote(caseId: string, data: any, options?: FetchOptions): Promise<CaseNote> {
   return apiFetch(`/v1/cases/${caseId}/notes`, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -150,11 +148,10 @@ export async function addCaseNote(caseId: string, data: any, options?: FetchOpti
   });
 }
 
-export async function listCaseNotes(caseId: string, options?: FetchOptions): Promise<Array<Record<string, any>>> {
+export async function listCaseNotes(caseId: string, options?: FetchOptions): Promise<CaseNote[]> {
   return apiFetch(`/v1/cases/${caseId}/notes`, options);
 }
 
-// OTB Incidents
 export async function createOTBIncident(data: any, options?: FetchOptions): Promise<OTBIncidentRecord> {
   return apiFetch('/v1/otb/incidents', {
     method: 'POST',
@@ -169,20 +166,17 @@ export async function listOTBIncidents(limit = 200, options?: FetchOptions): Pro
   return apiFetch(`/v1/otb/incidents?${params}`, options);
 }
 
-// Player Profile
 export async function getPlayerProfile(playerId: string, options?: FetchOptions): Promise<PlayerProfileResponse> {
   return apiFetch(`/v1/players/${playerId}/profile`, options);
 }
 
-// Tournament Dashboard
 export async function getTournamentDashboard(eventId?: string, options?: FetchOptions): Promise<TournamentDashboardResponse> {
   const params = new URLSearchParams();
   if (eventId) params.append('event_id', eventId);
   return apiFetch(`/v1/tournament-dashboard?${params}`, options);
 }
 
-// Live Sessions
-export async function createLiveSession(data: LiveSessionCreateRequest, options?: FetchOptions): Promise<Record<string, any>> {
+export async function createLiveSession(data: LiveSessionCreateRequest, options?: FetchOptions): Promise<LiveSession> {
   return apiFetch('/v1/live/sessions', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -190,7 +184,7 @@ export async function createLiveSession(data: LiveSessionCreateRequest, options?
   });
 }
 
-export async function getLiveSession(sessionId: string, options?: FetchOptions): Promise<Record<string, any>> {
+export async function getLiveSession(sessionId: string, options?: FetchOptions): Promise<LiveSession> {
   return apiFetch(`/v1/live/sessions/${sessionId}`, options);
 }
 
@@ -206,7 +200,6 @@ export async function getLiveSessionRisk(sessionId: string, options?: FetchOptio
   return apiFetch(`/v1/live/sessions/${sessionId}/risk`, options);
 }
 
-// Visuals (for chessboard board state)
 export async function getVisualsPgn(data: any, options?: FetchOptions): Promise<Record<string, any>> {
   return apiFetch('/v1/visuals/pgn', {
     method: 'POST',
@@ -223,7 +216,6 @@ export async function getVisualsAnalyzePgn(data: any, options?: FetchOptions): P
   });
 }
 
-// Health Check
 export async function health(): Promise<{ status: string }> {
   return apiFetch('/health', { role: undefined });
 }

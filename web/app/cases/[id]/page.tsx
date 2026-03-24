@@ -5,16 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { getCase, listCaseNotes, addCaseNote, updateCaseStatus } from '@/lib/api';
-import type { CaseRecord } from '@/lib/types';
+import type { CaseRecord, CaseNote } from '@/lib/types';
 import CopyableID from '@/components/CopyableID';
 import { formatRelativeTime } from '@/lib/utils';
-
-interface CaseNote {
-  id: string;
-  content: string;
-  created_at: string;
-  created_by?: string;
-}
 
 const STATUS_COLORS: Record<string, string> = {
   opened: 'bg-blue-500/10 text-blue-400',
