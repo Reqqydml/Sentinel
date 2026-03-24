@@ -4,7 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, FileText, Users, Trophy, Radio, Settings, Play } from 'lucide-react';
 
-const navItems = [
+type NavItem = {
+  href: string;
+  icon: typeof BarChart3;
+  label: string;
+};
+
+const navItems: NavItem[] = [
   { href: '/', icon: BarChart3, label: 'Dashboard' },
   { href: '/cases', icon: FileText, label: 'Cases' },
   { href: '/tournament', icon: Trophy, label: 'Tournament' },
@@ -31,7 +37,7 @@ export default function Navigation() {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg transition ${
                 isActive
                   ? 'bg-primary text-primary-foreground'

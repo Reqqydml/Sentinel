@@ -14,7 +14,7 @@ import type {
   CaseNote,
 } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_SENTINEL_API || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface FetchOptions {
   headers?: Record<string, string>;
