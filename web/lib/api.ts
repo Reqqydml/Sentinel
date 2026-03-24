@@ -25,7 +25,7 @@ interface FetchOptions {
 
 async function apiFetch<T>(
   path: string,
-  options: RequestInit & FetchOptions = {}
+  options: Omit<RequestInit, 'headers'> & FetchOptions = {}
 ): Promise<T> {
   const { headers = {}, role = 'system_admin', federationId, apiKey, ...fetchOptions } = options;
 
